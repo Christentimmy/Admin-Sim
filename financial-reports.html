@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Taxi Management System">
+  <meta name="author" content="">
+  <link href="img/logo/logo.png" rel="icon">
+  <title>TaxiAdmin - Financial Reports</title>
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="css/ruang-admin.min.css" rel="stylesheet">
+  <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+  <!-- Custom styles -->
+  <style>
+    .refund-card {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    .refund-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+    .refund-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e3e6f0;
+    }
+    .refund-id {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #4e73df;
+    }
+    .refund-status {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .status-pending {
+      background-color: rgba(246, 194, 62, 0.1);
+      color: #f6c23e;
+    }
+    .status-approved {
+      background-color: rgba(40, 167, 69, 0.1);
+      color: #28a745;
+    }
+    .status-rejected {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: #dc3545;
+    }
+    .refund-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .detail-label {
+      color: #858796;
+      font-size: 0.9rem;
+    }
+    .detail-value {
+      font-weight: 500;
+      color: #4e73df;
+    }
+    .refund-reason {
+      background-color: #f8f9fc;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+    .refund-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+    .action-btn {
+      padding: 0.5rem 1.5rem;
+      border-radius: 20px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .filter-panel {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .filter-group {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .filter-label {
+      min-width: 120px;
+      color: #6e707e;
+      font-weight: 500;
+    }
+    .filter-select {
+      border-radius: 20px;
+      padding: 0.5rem 1rem;
+      border: 1px solid #e3e6f0;
+      background: white;
+      color: #6e707e;
+      min-width: 150px;
+    }
+    .stats-card {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+      background: #f8f9fc;
+      border-radius: 10px;
+    }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #4e73df;
+      margin-bottom: 0.5rem;
+    }
+    .stat-label {
+      color: #858796;
+      font-size: 0.9rem;
+    }
+
+    /* Loading Overlay Styles */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .loading-content {
+      text-align: center;
+    }
+
+    .loading-content .spinner-border {
+      width: 3rem;
+      height: 3rem;
+    }
+
+    .loading-content .mt-3 {
+      color: #4e73df;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body id="page-top">
+  <div id="wrapper">
+    <!-- Sidebar -->
+    <ul class="navbar-nav sidebar sidebar-light accordion" id="accordionSidebar">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <div class="sidebar-brand-icon">
+          <img src="img/logo/logo2.png">
+        </div>
+        <div class="sidebar-brand-text mx-3">TaxiAdmin</div>
+      </a>
+      <hr class="sidebar-divider my-0">
+      <li class="nav-item">
+        <a class="nav-link" href="index.html">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>Dashboard</span></a>
+      </li>
+      <hr class="sidebar-divider">
+      <div class="sidebar-heading">
+        Management
+      </div>
+      <li class="nav-item">
+        <a class="nav-link" href="drivers.html">
+          <i class="fas fa-fw fa-user-tie"></i>
+          <span>Drivers</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="users.html">
+          <i class="fas fa-fw fa-users"></i>
+          <span>User Management</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="bookings.html">
+          <i class="fas fa-fw fa-calendar-check"></i>
+          <span>Bookings</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="payments.html">
+          <i class="fas fa-fw fa-money-bill-wave"></i>
+          <span>Payments</span>
+        </a>
+      </li>
+      <hr class="sidebar-divider">
+      <div class="sidebar-heading">
+        Reports
+      </div>
+      <li class="nav-item active">
+        <a class="nav-link" href="financial-reports.html">
+          <i class="fas fa-fw fa-file-invoice"></i>
+          <span>Financial Reports</span>
+        </a>
+      </li>
+      <hr class="sidebar-divider">
+      <div class="sidebar-heading">
+        Settings
+      </div>
+      <li class="nav-item">
+        <a class="nav-link" href="settings.html">
+          <i class="fas fa-fw fa-cog"></i>
+          <span>System Settings</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="profile.html">
+          <i class="fas fa-fw fa-user-cog"></i>
+          <span>Profile</span>
+        </a>
+      </li>
+      <hr class="sidebar-divider">
+      <div class="version" id="version-ruangadmin"></div>
+    </ul>
+    <!-- Sidebar -->
+
+    <div id="content-wrapper" class="d-flex flex-column">
+      <div id="content">
+        <!-- TopBar -->
+        <nav class="navbar navbar-expand navbar-light bg-navbar topbar mb-4 static-top">
+          <button id="sidebarToggleTop" class="btn btn-link rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+          <ul class="navbar-nav ml-auto">
+            <div class="topbar-divider d-none d-sm-block"></div>
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <img class="img-profile rounded-circle" src="img/boy.png" style="max-width: 60px">
+                <span class="ml-2 d-none d-lg-inline text-white small">Admin User</span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="javascript:void(0);" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>
+            </li>
+          </ul>
+        </nav>
+        <!-- Topbar -->
+
+        <!-- Container Fluid-->
+        <div class="container-fluid" id="container-wrapper">
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Financial Reports</h1>
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="./">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Financial Reports</li>
+            </ol>
+          </div>
+
+          <!-- Refund Statistics Cards -->
+          <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Total Refunds</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalRefunds">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-receipt fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Pending Refunds</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="pendingRefunds">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-clock fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Total Refund Amount</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalRefundAmount">kr 0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                        Approval Rate</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="approvalRate">0%</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter Panel -->
+          <div class="filter-panel">
+            <div class="filter-group">
+              <label>Status</label>
+              <select class="filter-select">
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+                <option value="refunded">Refunded</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Refunds Table -->
+          <div class="row">
+            <div class="col-lg-12 mb-4">
+              <!-- Simple Tables -->
+              <div class="card">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Refunds List</h6>
+                </div>
+                <div class="table-responsive">
+                  <table class="table align-items-center table-flush">
+                    <thead class="thead-light">
+                      <tr>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="refundsTableBody">
+                      <!-- Refunds will be populated here -->
+                    </tbody>
+                  </table>
+                </div>
+                <div class="card-footer"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!---Container Fluid-->
+      </div>
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>copyright &copy; <script>document.write(new Date().getFullYear());</script> - developed by
+              <b><a href="#" target="_blank">TaxiAdmin</a></b>
+            </span>
+          </div>
+        </div>
+      </footer>
+      <!-- Footer -->
+    </div>
+  </div>
+
+  <!-- Scroll to top -->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+  <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+  <script src="js/ruang-admin.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/financial-reports.js"></script>
+
+  <!-- Refund Details Modal -->
+  <div class="modal fade" id="refundDetailsModal" tabindex="-1" role="dialog" aria-labelledby="refundDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-light">
+          <h5 class="modal-title" id="refundDetailsModalLabel">
+            <i class="fas fa-receipt mr-2"></i>Refund Details
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Status Section -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-1">Refund Status</h6>
+                  <span id="refundStatus" class="badge badge-lg"></span>
+                </div>
+                <div>
+                  <h6 class="mb-1">Payment Status</h6>
+                  <span id="paymentStatus" class="badge badge-lg"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Information -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card border-0 bg-light mb-3">
+                <div class="card-body">
+                  <h6 class="card-title text-primary mb-3">
+                    <i class="fas fa-user mr-2"></i>Customer Information
+                  </h6>
+                  <div class="mb-2">
+                    <small class="text-muted">Full Name</small>
+                    <p class="mb-0" id="customerName"></p>
+                  </div>
+                  <div class="mb-2">
+                    <small class="text-muted">Email</small>
+                    <p class="mb-0" id="customerEmail"></p>
+                  </div>
+                  <div class="mb-2">
+                    <small class="text-muted">Phone</small>
+                    <p class="mb-0" id="customerPhone"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card border-0 bg-light mb-3">
+                <div class="card-body">
+                  <h6 class="card-title text-primary mb-3">
+                    <i class="fas fa-car mr-2"></i>Trip Information
+                  </h6>
+                  <div class="mb-2">
+                    <small class="text-muted">Date</small>
+                    <p class="mb-0" id="tripDate"></p>
+                  </div>
+                  <div class="mb-2">
+                    <small class="text-muted">Pickup Location</small>
+                    <p class="mb-0" id="pickupLocation"></p>
+                  </div>
+                  <div class="mb-2">
+                    <small class="text-muted">Dropoff Location</small>
+                    <p class="mb-0" id="dropoffLocation"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Driver and Financial Info -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card border-0 bg-light mb-3">
+                <div class="card-body">
+                  <h6 class="card-title text-primary mb-3">
+                    <i class="fas fa-user-tie mr-2"></i>Driver Information
+                  </h6>
+                  <div class="mb-2">
+                    <small class="text-muted">Name</small>
+                    <p class="mb-0" id="driverName"></p>
+                  </div>
+                  <div class="mb-2">
+                    <small class="text-muted">Phone</small>
+                    <p class="mb-0" id="driverPhone"></p>
+                  </div>
+                  <div class="mb-2">
+                    <small class="text-muted">Rating</small>
+                    <p class="mb-0" id="driverRating"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card border-0 bg-light mb-3">
+                <div class="card-body">
+                  <h6 class="card-title text-primary mb-3">
+                    <i class="fas fa-money-bill-wave mr-2"></i>Financial Details
+                  </h6>
+                  <div class="mb-2">
+                    <small class="text-muted">Refund Amount</small>
+                    <p class="mb-0" id="refundAmount"></p>
+                  </div>
+                  <div class="mb-2">
+                    <small class="text-muted">Payment Method</small>
+                    <p class="mb-0" id="paymentMethod"></p>
+                  </div>
+                  <div class="mb-2">
+                    <small class="text-muted">Transaction ID</small>
+                    <p class="mb-0" id="transactionId"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" id="rejectRefundBtn">
+            <i class="fas fa-times"></i> Reject Refund
+          </button>
+          <button type="button" class="btn btn-success" id="approveRefundBtn">
+            <i class="fas fa-check"></i> Approve Refund
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html> 

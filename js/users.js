@@ -1,7 +1,4 @@
 // Constants
-const API_BASE_URL = 'http://192.168.1.108:5000/admin';
-const TEST_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YWE5NDVjMTVjMTk5OGQ4NTUzODVjZSIsInJvbGUiOiJzdXBlciIsImlhdCI6MTc0Mjk5MjU4NywiZXhwIjoxNzQzMDc4OTg3fQ.bwJn7uEU7WzH9lITqGw4LzWAnLkpk7SXHN3p_g-6O2I';
-
 let currentUserId = null;
 let currentUserStatus = null;
 
@@ -11,9 +8,9 @@ $(document).ready(function() {
         processing: true,
         serverSide: true,
         ajax: {
-            url: `${API_BASE_URL}/users`,
+            url: `${window.API_CONFIG.API_BASE_URL}/users`,
             headers: {
-                'Authorization': `Bearer ${TEST_TOKEN}`
+                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
             },
             data: function(d) {
                 return {
@@ -40,10 +37,10 @@ $(document).ready(function() {
                     `<span class="badge badge-${getStatusBadgeClass(user.status)}">${user.status}</span>`,
                     new Date(user.createdAt).toLocaleDateString(),
                     `<div class="btn-group">
-                        <button class="btn btn-sm ${user.status === 'blocked' ? 'btn-success' : 'btn-danger'}" 
+                        <button class="btn btn-sm ${isBlockedStatus(user.status) ? 'btn-success' : 'btn-danger'}" 
                                 onclick="handleBlockUser('${user._id}', '${user.status}')">
-                            <i class="fas fa-${user.status === 'blocked' ? 'unlock' : 'ban'}"></i>
-                            ${user.status === 'blocked' ? 'Unblock' : 'Block'}
+                            <i class="fas fa-${isBlockedStatus(user.status) ? 'unlock' : 'ban'}"></i>
+                            ${isBlockedStatus(user.status) ? 'Unblock' : 'Block'}
                         </button>
                      </div>`
                 ]);
@@ -108,7 +105,7 @@ $(document).ready(function() {
 function handleBlockUser(userId, status) {
     currentUserId = userId;
     currentUserStatus = status;
-    const isBlocking = status !== 'blocked';
+    const isBlocking = !isBlockedStatus(status);
     const modal = $('#blockUserModal');
     const actionText = isBlocking ? 'block' : 'unblock';
     
@@ -125,11 +122,11 @@ function handleBlockUser(userId, status) {
 // Confirm block/unblock action
 $('#confirmBlockBtn').on('click', async function() {
     try {
-        const action = currentUserStatus === 'blocked' ? 'unblock' : 'block';
-        const response = await fetch(`${API_BASE_URL}/users/${currentUserId}/${action}`, {
+        const action = isBlockedStatus(currentUserStatus) ? 'unblock' : 'block';
+        const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/users/${currentUserId}/${action}`, {
             method: 'PATCH',
             headers: {
-                'Authorization': `Bearer ${TEST_TOKEN}`
+                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
             }
         });
 
@@ -139,24 +136,30 @@ $('#confirmBlockBtn').on('click', async function() {
 
         const data = await response.json();
         
-        if (data.success) {
-            showAlert(`User ${action}ed successfully`, 'success');
+        if (data.message) {
+            showAlert(data.message, 'success');
             $('#blockUserModal').modal('hide');
             $('#dataTableHover').DataTable().ajax.reload(null, false); // Reload current page
         } else {
             throw new Error(data.message || `Failed to ${action} user`);
         }
     } catch (error) {
-        console.error(`Error ${currentUserStatus === 'blocked' ? 'unblocking' : 'blocking'} user:`, error);
+        console.error(`Error ${isBlockedStatus(currentUserStatus) ? 'unblocking' : 'blocking'} user:`, error);
         showAlert(error.message, 'error');
     }
 });
 
 // Helper Functions
+function isBlockedStatus(status) {
+    return ['blocked', 'banned', 'inactive'].includes(status.toLowerCase());
+}
+
 function getStatusBadgeClass(status) {
     switch(status.toLowerCase()) {
         case 'active': return 'success';
-        case 'blocked': return 'danger';
+        case 'blocked':
+        case 'banned':
+        case 'inactive': return 'danger';
         case 'pending': return 'warning';
         default: return 'secondary';
     }

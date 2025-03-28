@@ -1,7 +1,4 @@
 // Driver Management Functions
-const API_BASE_URL = 'http://192.168.1.108:5000/admin'; // Update this to your actual server URL
-const TEST_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YWE5NDVjMTVjMTk5OGQ4NTUzODVjZSIsInJvbGUiOiJzdXBlciIsImlhdCI6MTc0Mjk5MjU4NywiZXhwIjoxNzQzMDc4OTg3fQ.bwJn7uEU7WzH9lITqGw4LzWAnLkpk7SXHN3p_g-6O2I';
-
 // Add this at the top of the file with other constants
 let currentDriverId = null;
 let pendingDriversData = null;
@@ -10,9 +7,9 @@ let currentDriverStatus = null;
 // Get all drivers
 async function getAllDrivers() {
     try {
-        const response = await fetch(`${API_BASE_URL}/drivers`, {
+        const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers`, {
             headers: {
-                'Authorization': `Bearer ${TEST_TOKEN}`
+                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
             }
         });
         if (!response.ok) {
@@ -33,9 +30,9 @@ async function getAllDrivers() {
 async function getPendingDrivers() {
     try {
         console.log('Fetching pending drivers...');
-        const response = await fetch(`${API_BASE_URL}/get-pending-drivers`, {
+        const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/get-pending-drivers`, {
             headers: {
-                'Authorization': `Bearer ${TEST_TOKEN}`,
+                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`,
                 'Content-Type': 'application/json'
             }
         });
@@ -62,9 +59,9 @@ async function getPendingDrivers() {
 // Get driver by ID
 async function getDriverById(driverId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/drivers/${driverId}`, {
+        const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers/${driverId}`, {
             headers: {
-                'Authorization': `Bearer ${TEST_TOKEN}`
+                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
             }
         });
         if (!response.ok) {
@@ -84,11 +81,11 @@ async function getDriverById(driverId) {
 // Create new driver
 async function createDriver(driverData) {
     try {
-        const response = await fetch(`${API_BASE_URL}/drivers`, {
+        const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${TEST_TOKEN}`
+                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
             },
             body: JSON.stringify(driverData)
         });
@@ -109,11 +106,11 @@ async function createDriver(driverData) {
 // Update driver
 async function updateDriver(driverId, driverData) {
     try {
-        const response = await fetch(`${API_BASE_URL}/drivers/${driverId}`, {
+        const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers/${driverId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${TEST_TOKEN}`
+                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
             },
             body: JSON.stringify(driverData)
         });
@@ -134,10 +131,10 @@ async function updateDriver(driverId, driverData) {
 // Delete driver
 async function deleteDriver(driverId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/drivers/${driverId}`, {
+        const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers/${driverId}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${TEST_TOKEN}`
+                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
             }
         });
         if (!response.ok) {
@@ -157,10 +154,10 @@ async function deleteDriver(driverId) {
 // Driver status management
 async function updateDriverStatus(driverId, action) {
     try {
-        const response = await fetch(`${API_BASE_URL}/drivers/${driverId}/${action}`, {
+        const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers/${driverId}/${action}`, {
             method: 'PATCH',
             headers: {
-                'Authorization': `Bearer ${TEST_TOKEN}`
+                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
             }
         });
         if (!response.ok) {
@@ -327,10 +324,10 @@ function viewDriverDocuments(driverId) {
 async function approveDriver(driverId) {
     if (confirm('Are you sure you want to approve this driver?')) {
         try {
-            const response = await fetch(`${API_BASE_URL}/drivers/${driverId}/approve`, {
+            const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers/${driverId}/approve`, {
                 method: 'PATCH',
                 headers: {
-                    'Authorization': `Bearer ${TEST_TOKEN}`,
+                    'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -361,10 +358,10 @@ async function approveDriver(driverId) {
 async function rejectDriver(driverId) {
     if (confirm('Are you sure you want to reject this driver?')) {
         try {
-            const response = await fetch(`${API_BASE_URL}/drivers/${driverId}/reject`, {
+            const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers/${driverId}/reject`, {
                 method: 'PATCH',
                 headers: {
-                    'Authorization': `Bearer ${TEST_TOKEN}`,
+                    'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -412,9 +409,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 // Add this function to get user details
 async function getUserDetails(userId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/drivers/${userId}/user`, {
+        const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers/${userId}/user`, {
             headers: {
-                'Authorization': `Bearer ${TEST_TOKEN}`
+                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
             }
         });
 
@@ -441,9 +438,9 @@ $(document).ready(function() {
             serverSide: true,
             pageLength: 10,
             ajax: {
-                url: `${API_BASE_URL}/drivers`,
+                url: `${window.API_CONFIG.API_BASE_URL}/drivers`,
                 headers: {
-                    'Authorization': `Bearer ${TEST_TOKEN}`
+                    'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
                 },
                 data: function(d) {
                     return {
@@ -621,9 +618,9 @@ function generateStars(rating) {
 async function viewDriver(driverId, userId) {
     try {
         // Get user details from the API
-        const response = await fetch(`${API_BASE_URL}/drivers/${userId}/user`, {
+        const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers/${userId}/user`, {
             headers: {
-                'Authorization': `Bearer ${TEST_TOKEN}`
+                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
             }
         });
 
@@ -795,10 +792,10 @@ $(document).ready(function() {
     $('#confirmBlockBtn').on('click', async function() {
         try {
             const endpoint = currentDriverStatus === 'blocked' ? 'unblock' : 'block';
-            const response = await fetch(`${API_BASE_URL}/drivers/${currentDriverId}/${endpoint}`, {
+            const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers/${currentDriverId}/${endpoint}`, {
                 method: 'PATCH',
                 headers: {
-                    'Authorization': `Bearer ${TEST_TOKEN}`
+                    'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
                 }
             });
 

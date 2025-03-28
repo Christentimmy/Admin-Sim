@@ -65,13 +65,7 @@
         Reports
       </div>
       <li class="nav-item">
-        <a class="nav-link" href="reports.html">
-          <i class="fas fa-fw fa-chart-bar"></i>
-          <span>Analytics</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="reports.html">
+        <a class="nav-link" href="financial-reports.html">
           <i class="fas fa-fw fa-file-invoice"></i>
           <span>Financial Reports</span>
         </a>
@@ -400,107 +394,18 @@
   <!-- Core plugin JavaScript-->
   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
+  <!-- Custom scripts for all pages-->
+  <script src="js/ruang-admin.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/index.js"></script>
+
   <!-- Page level plugins -->
   <script src="vendor/chart.js/Chart.min.js"></script>
-  <script src="js/demo/chart-area-demo.js"></script>
   <script src="js/demo/chart-pie-demo.js"></script>
 
   <!-- Add DataTables JS -->
   <script src="vendor/datatables/jquery.dataTables.min.js"></script>
   <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-  <!-- Custom scripts for all pages-->
-  <script src="js/ruang-admin.min.js"></script>
-
-  <!-- Page level custom scripts -->
-  <script>
-    // Add the constants from drivers.js
-    const API_BASE_URL = 'http://192.168.1.108:5000/admin';
-    const TEST_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YWE5NDVjMTVjMTk5OGQ4NTUzODVjZSIsInJvbGUiOiJzdXBlciIsImlhdCI6MTc0Mjk5MjU4NywiZXhwIjoxNzQzMDc4OTg3fQ.bwJn7uEU7WzH9lITqGw4LzWAnLkpk7SXHN3p_g-6O2I';
-
-    $(document).ready(function() {
-      $('#dataTableHover').DataTable({
-        paging: false,
-        searching: false,
-        ordering: false,
-        info: false,
-        responsive: true,
-        autoWidth: false,
-        language: {
-          emptyTable: "No recent bookings found"
-        }
-      }); // ID From dataTable with Hover
-      
-      // Fetch recent bookings
-      fetchRecentBookings();
-    });
-
-    async function fetchRecentBookings() {
-      try {
-        const response = await fetch(`${API_BASE_URL}/recent-bookings`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TEST_TOKEN}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        
-        if (data.message === "Recent bookings fetched successfully") {
-          const tableBody = document.getElementById('recentBookingsTableBody');
-          tableBody.innerHTML = ''; // Clear existing rows
-
-          data.rides.forEach(ride => {
-            const row = document.createElement('tr');
-            const date = new Date(ride.createdAt).toLocaleString();
-            
-            // Determine status badge color
-            let statusBadgeClass = 'badge-secondary';
-            switch(ride.status) {
-              case 'completed':
-                statusBadgeClass = 'badge-success';
-                break;
-              case 'cancelled':
-                statusBadgeClass = 'badge-danger';
-                break;
-              case 'pending':
-                statusBadgeClass = 'badge-warning';
-                break;
-            }
-
-            row.innerHTML = `
-              <td>${ride._id.slice(-6)}</td>
-              <td>${ride.pickup_location.address}</td>
-              <td>${ride.dropoff_location.address}</td>
-              <td><span class="badge ${statusBadgeClass}">${ride.status}</span></td>
-              <td>${ride.fare.toFixed(2)}</td>
-              <td>${ride.payment_method}</td>
-              <td><span class="badge badge-${ride.payment_status === 'pending' ? 'warning' : 'success'}">${ride.payment_status}</span></td>
-              <td>${date}</td>
-            `;
-            
-            tableBody.appendChild(row);
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching recent bookings:', error);
-        // Show error message to the user
-        const tableBody = document.getElementById('recentBookingsTableBody');
-        tableBody.innerHTML = `
-          <tr>
-            <td colspan="8" class="text-center text-danger">
-              Error loading recent bookings. Please try again later.
-            </td>
-          </tr>
-        `;
-      }
-    }
-  </script>
 </body>
 
 </html>

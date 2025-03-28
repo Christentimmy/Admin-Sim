@@ -1,7 +1,4 @@
 // Constants
-const API_BASE_URL = 'http://192.168.1.108:5000/admin';
-const TEST_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YWE5NDVjMTVjMTk5OGQ4NTUzODVjZSIsInJvbGUiOiJzdXBlciIsImlhdCI6MTc0Mjk5MjU4NywiZXhwIjoxNzQzMDc4OTg3fQ.bwJn7uEU7WzH9lITqGw4LzWAnLkpk7SXHN3p_g-6O2I';
-
 let currentStatus = 'all';
 
 // Initialize DataTable
@@ -10,9 +7,9 @@ $(document).ready(function() {
         processing: true,
         serverSide: true,
         ajax: {
-            url: `${API_BASE_URL}/history`,
+            url: `${window.API_CONFIG.API_BASE_URL}/history`,
             headers: {
-                'Authorization': `Bearer ${TEST_TOKEN}`
+                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
             },
             data: function(d) {
                 return {
@@ -127,9 +124,9 @@ $(document).ready(function() {
 // Show ride details in modal
 async function showRideDetails(rideId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/ride-details/${rideId}`, {
+        const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/ride-details/${rideId}`, {
             headers: {
-                'Authorization': `Bearer ${TEST_TOKEN}`
+                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
             }
         });
 
