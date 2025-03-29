@@ -6,6 +6,25 @@ const auth = {
         return !!token;
     },
 
+    // Validate token with server
+    validateToken: async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) return false;
+
+            const response = await fetch(window.API_CONFIG.TOKEN_VALIDATION_URL, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            return response.status === 200;
+        } catch (error) {
+            console.error('Error validating token:', error);
+            return false;
+        }
+    },
+
     // Login function
     login: async (email, password) => {
         try {

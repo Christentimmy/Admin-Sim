@@ -235,6 +235,14 @@ function updateRevenueChart(revenueData) {
 // Initialize Dashboard
 async function initializeDashboard() {
     try {
+        // First validate the token
+        const isValidToken = await auth.validateToken();
+        if (!isValidToken) {
+            // Token is invalid or expired, redirect to login
+            window.location.href = 'login.html';
+            return;
+        }
+
         // Fetch all dashboard data
         const [stats, bookings, revenue] = await Promise.all([
             fetchDashboardStats(),
