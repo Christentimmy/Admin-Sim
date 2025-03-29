@@ -80,12 +80,6 @@
           <span>System Settings</span>
         </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="profile.html">
-          <i class="fas fa-fw fa-user-cog"></i>
-          <span>Profile</span>
-        </a>
-      </li>
       <hr class="sidebar-divider">
       <div class="version" id="version-ruangadmin"></div>
     </ul>
@@ -98,104 +92,18 @@
             <i class="fa fa-bars"></i>
           </button>
           <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown no-arrow mx-1">
-              <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-bell fa-fw"></i>
-                <span class="badge badge-danger badge-counter">3+</span>
-              </a>
-              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                aria-labelledby="alertsDropdown">
-                <h6 class="dropdown-header">
-                  Alerts Center
-                </h6>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="mr-3">
-                    <div class="icon-circle bg-primary">
-                      <i class="fas fa-car text-white"></i>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="small text-gray-500">New Booking</div>
-                    <span class="font-weight-bold">New ride request from John Doe!</span>
-                  </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="mr-3">
-                    <div class="icon-circle bg-success">
-                      <i class="fas fa-check text-white"></i>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="small text-gray-500">Completed Trip</div>
-                    Trip #1234 has been completed successfully
-                  </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="mr-3">
-                    <div class="icon-circle bg-warning">
-                      <i class="fas fa-exclamation-triangle text-white"></i>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="small text-gray-500">Vehicle Maintenance</div>
-                    Vehicle #ABC123 needs maintenance
-                  </div>
-                </a>
-                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-              </div>
-            </li>
-            <li class="nav-item dropdown no-arrow mx-1">
-              <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-envelope fa-fw"></i>
-                <span class="badge badge-warning badge-counter">2</span>
-              </a>
-              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                aria-labelledby="messagesDropdown">
-                <h6 class="dropdown-header">
-                  Message Center
-                </h6>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="dropdown-list-image mr-3">
-                    <img class="rounded-circle" src="img/man.png" style="max-width: 60px" alt="">
-                    <div class="status-indicator bg-success"></div>
-                  </div>
-                  <div class="font-weight-bold">
-                    <div class="text-truncate">Driver John reported an issue with his vehicle</div>
-                    <div class="small text-gray-500">John Smith · 30m</div>
-                  </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="dropdown-list-image mr-3">
-                    <img class="rounded-circle" src="img/girl.png" style="max-width: 60px" alt="">
-                    <div class="status-indicator bg-default"></div>
-                  </div>
-                  <div>
-                    <div class="text-truncate">Customer feedback for trip #1234</div>
-                    <div class="small text-gray-500">Sarah Johnson · 2h</div>
-                  </div>
-                </a>
-                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-              </div>
-            </li>
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin User</span>
                 <img class="img-profile rounded-circle" src="img/boy.png" style="max-width: 60px">
               </a>
               <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Profile
-                </a>
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="settings.html">
                   <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                   Settings
                 </a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                <a class="dropdown-item" href="#" onclick="auth.logout(); return false;">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   Logout
                 </a>
@@ -215,17 +123,17 @@
           </div>
 
           <div class="row mb-3">
-            <!-- Earnings (Monthly) Card Example -->
+            <!-- Total Trips Card -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card h-100 py-2">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                        Total Trips (Monthly)</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">2,500</div>
+                        Total Trips</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalTrips">0</div>
                       <div class="mt-2 mb-0 text-muted text-xs">
-                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 0%</span>
                         <span>Since last month</span>
                       </div>
                     </div>
@@ -237,7 +145,7 @@
               </div>
             </div>
 
-            <!-- Earnings (Annual) Card Example -->
+            <!-- Active Drivers Card -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card h-100 py-2">
                 <div class="card-body">
@@ -245,9 +153,9 @@
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                         Active Drivers</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">45</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="activeDrivers">0</div>
                       <div class="mt-2 mb-0 text-muted text-xs">
-                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 12%</span>
+                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 0%</span>
                         <span>Since last month</span>
                       </div>
                     </div>
@@ -259,29 +167,29 @@
               </div>
             </div>
 
-            <!-- Tasks Card Example -->
+            <!-- Total Users Card -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card h-100 py-2">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Active Vehicles
-                      </div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">38</div>
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                        Total Users</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalUsers">0</div>
                       <div class="mt-2 mb-0 text-muted text-xs">
-                        <span class="text-danger mr-2"><i class="fa fa-arrow-down"></i> 2</span>
+                        <span class="text-danger mr-2"><i class="fa fa-arrow-down"></i> 0</span>
                         <span>In maintenance</span>
                       </div>
                     </div>
                     <div class="col-auto">
-                      <i class="fas fa-car fa-2x text-gray-300"></i>
+                      <i class="fas fa-users fa-2x text-gray-300"></i>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Pending Requests Card Example -->
+            <!-- Pending Bookings Card -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card h-100 py-2">
                 <div class="card-body">
@@ -289,9 +197,9 @@
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                         Pending Bookings</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="pendingBookings">0</div>
                       <div class="mt-2 mb-0 text-muted text-xs">
-                        <span class="text-danger mr-2"><i class="fa fa-arrow-up"></i> 5</span>
+                        <span class="text-danger mr-2"><i class="fa fa-arrow-down"></i> 0</span>
                         <span>New requests</span>
                       </div>
                     </div>

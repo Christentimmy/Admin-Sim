@@ -3,11 +3,12 @@ const settings = {
     // Get current settings
     getSettings: async () => {
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch(`${API_CONFIG.API_BASE_URL}/settings/get-settings`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${API_CONFIG.TEST_TOKEN}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
@@ -26,11 +27,12 @@ const settings = {
     // Update settings
     updateSettings: async (settingsData) => {
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch(`${API_CONFIG.API_BASE_URL}/settings/update-settings`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${API_CONFIG.TEST_TOKEN}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(settingsData)
             });

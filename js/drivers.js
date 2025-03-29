@@ -1,5 +1,4 @@
 // Driver Management Functions
-// Add this at the top of the file with other constants
 let currentDriverId = null;
 let pendingDriversData = null;
 let currentDriverStatus = null;
@@ -7,9 +6,10 @@ let currentDriverStatus = null;
 // Get all drivers
 async function getAllDrivers() {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers`, {
             headers: {
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             }
         });
         if (!response.ok) {
@@ -29,22 +29,19 @@ async function getAllDrivers() {
 // Get pending drivers
 async function getPendingDrivers() {
     try {
-        console.log('Fetching pending drivers...');
+        const token = localStorage.getItem('token');
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/get-pending-drivers`, {
             headers: {
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
-        console.log('Response status:', response.status);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const data = await response.json();
-        console.log('Pending drivers data:', data);
-        
         if (!data.success) {
             throw new Error(data.message || 'Failed to fetch pending drivers');
         }
@@ -59,9 +56,10 @@ async function getPendingDrivers() {
 // Get driver by ID
 async function getDriverById(driverId) {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers/${driverId}`, {
             headers: {
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             }
         });
         if (!response.ok) {
@@ -154,10 +152,11 @@ async function deleteDriver(driverId) {
 // Driver status management
 async function updateDriverStatus(driverId, action) {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers/${driverId}/${action}`, {
             method: 'PATCH',
             headers: {
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             }
         });
         if (!response.ok) {
@@ -176,7 +175,6 @@ async function updateDriverStatus(driverId, action) {
 
 // Display pending drivers in table
 function displayPendingDrivers(drivers) {
-    console.log('Displaying pending drivers:', drivers);
     const tableBody = document.querySelector('#pendingDriversTable tbody');
     if (!tableBody) {
         console.error('Pending drivers table body not found!');
@@ -192,7 +190,6 @@ function displayPendingDrivers(drivers) {
         return;
     }
     
-    // Store the drivers data for later use
     pendingDriversData = drivers;
     
     drivers.forEach(driver => {
@@ -219,13 +216,11 @@ function viewDriverDocuments(driverId) {
     try {
         currentDriverId = driverId;
         
-        // Find the driver in our stored data
         const driver = pendingDriversData.find(d => d._id === driverId);
         if (!driver) {
             throw new Error('Driver not found in pending drivers list');
         }
         
-        // Populate driver information
         document.getElementById('docDriverName').textContent = driver.user.email.split('@')[0] || 'N/A';
         document.getElementById('docDriverEmail').textContent = driver.user.email;
         document.getElementById('docDriverPhone').textContent = driver.user.phone || 'N/A';
@@ -233,7 +228,7 @@ function viewDriverDocuments(driverId) {
         document.getElementById('docVehicleModel').textContent = `${driver.car.model} ${driver.car.manufacturer}`;
         document.getElementById('docRegistrationDate').textContent = new Date(driver.createdAt).toLocaleDateString();
         
-        // Populate personal documents
+        // Populate documents
         document.getElementById('personalDocs').innerHTML = `
             <div class="row">
                 <div class="col-md-6 mb-3">
@@ -263,7 +258,6 @@ function viewDriverDocuments(driverId) {
             </div>
         `;
 
-        // Populate vehicle documents
         document.getElementById('vehicleDocs').innerHTML = `
             <div class="row">
                 <div class="col-md-6 mb-3">
@@ -288,32 +282,9 @@ function viewDriverDocuments(driverId) {
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-title">Owner Certificate</h6>
-                            <p class="card-text">Required for vehicle ownership verification</p>
-                            <a href="${driver.vehicle_documents.owner_certificate}" target="_blank" class="btn btn-sm btn-primary">
-                                <i class="fas fa-eye"></i> View Document
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-title">PUC (Pollution Under Control)</h6>
-                            <p class="card-text">Required for vehicle emission compliance</p>
-                            <a href="${driver.vehicle_documents.puc}" target="_blank" class="btn btn-sm btn-primary">
-                                <i class="fas fa-eye"></i> View Document
-                            </a>
-                        </div>
-                    </div>
-                </div>
             </div>
         `;
 
-        // Show the modal
         $('#driverDocumentsModal').modal('show');
     } catch (error) {
         showAlert(error.message || 'Error loading driver documents', 'error');
@@ -324,10 +295,11 @@ function viewDriverDocuments(driverId) {
 async function approveDriver(driverId) {
     if (confirm('Are you sure you want to approve this driver?')) {
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers/${driverId}/approve`, {
                 method: 'PATCH',
                 headers: {
-                    'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -339,9 +311,7 @@ async function approveDriver(driverId) {
             const data = await response.json();
             if (data.message) {
                 showAlert(data.message, 'success');
-                // Close the documents modal
                 $('#driverDocumentsModal').modal('hide');
-                // Refresh the pending drivers table
                 const pendingDrivers = await getPendingDrivers();
                 displayPendingDrivers(pendingDrivers.drivers);
             } else {
@@ -358,10 +328,11 @@ async function approveDriver(driverId) {
 async function rejectDriver(driverId) {
     if (confirm('Are you sure you want to reject this driver?')) {
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/drivers/${driverId}/reject`, {
                 method: 'PATCH',
                 headers: {
-                    'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -373,9 +344,7 @@ async function rejectDriver(driverId) {
             const data = await response.json();
             if (data.message) {
                 showAlert(data.message, 'success');
-                // Close the documents modal
                 $('#driverDocumentsModal').modal('hide');
-                // Refresh the pending drivers table
                 const pendingDrivers = await getPendingDrivers();
                 displayPendingDrivers(pendingDrivers.drivers);
             } else {
@@ -390,19 +359,15 @@ async function rejectDriver(driverId) {
 
 // Initialize pending drivers table
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('DOM Content Loaded - Initializing pending drivers...');
     try {
         const pendingDrivers = await getPendingDrivers();
-        console.log('Got pending drivers:', pendingDrivers);
         if (pendingDrivers && pendingDrivers.drivers) {
             displayPendingDrivers(pendingDrivers.drivers);
         } else {
-            console.error('Invalid pending drivers data structure:', pendingDrivers);
             showAlert('Error: Invalid data format received from server', 'error');
         }
     } catch (error) {
         console.error('Error in initialization:', error);
-        // Don't show another alert here as it's already shown in getPendingDrivers
     }
 });
 
@@ -440,7 +405,7 @@ $(document).ready(function() {
             ajax: {
                 url: `${window.API_CONFIG.API_BASE_URL}/drivers`,
                 headers: {
-                    'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
                 data: function(d) {
                     return {
@@ -454,12 +419,6 @@ $(document).ready(function() {
                         showAlert('Failed to load drivers', 'error');
                         return [];
                     }
-
-                    // Update the total records and pages for pagination
-                    driverTable.page.len(response.totalDrivers).draw(false);
-                    driverTable.page.info().totalPages = response.totalPages;
-                    driverTable.page.info().recordsTotal = response.totalDrivers;
-                    driverTable.page.info().recordsFiltered = response.totalDrivers;
 
                     return response.drivers.map(driver => [
                         `<div class="d-flex align-items-center">
@@ -487,7 +446,6 @@ $(document).ready(function() {
                 },
                 error: function(xhr, error, thrown) {
                     console.error('DataTable error:', error);
-                    console.error('Response:', xhr.responseText);
                     showAlert('Error loading drivers data', 'error');
                 }
             },
@@ -498,89 +456,24 @@ $(document).ready(function() {
                 { title: 'Vehicle' },
                 { title: 'Status' },
                 { title: 'Rating' },
-                { title: 'Actions' }
+                { title: 'Actions', orderable: false }
             ],
             order: [[0, 'asc']],
             language: {
                 processing: '<i class="fas fa-spinner fa-spin"></i> Loading drivers...',
-                emptyTable: '',
-                zeroRecords: '',
+                emptyTable: 'No drivers found',
+                zeroRecords: 'No matching drivers found',
                 info: "Showing _START_ to _END_ of _TOTAL_ drivers",
-                infoEmpty: "",
-                infoFiltered: "",
+                infoEmpty: "No drivers available",
+                infoFiltered: "(filtered from _MAX_ total drivers)",
                 paginate: {
                     first: "First",
                     last: "Last",
                     next: "Next",
                     previous: "Previous"
                 }
-            },
-            info: true,
-            paging: true,
-            pageLength: 10,
-            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-            pagingType: 'numbers',
-            processing: true,
-            serverSide: true,
-            // Custom pagination rendering
-            drawCallback: function() {
-                // Get the current page info
-                const pageInfo = this.api().page.info();
-                const totalPages = pageInfo.totalPages;
-                const currentPage = pageInfo.page + 1;
-
-                // Get the pagination container
-                const paginationContainer = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
-                
-                // Clear existing pagination
-                paginationContainer.find('.paginate_button').remove();
-                
-                // Add first page
-                paginationContainer.append(`
-                    <a class="paginate_button ${currentPage === 1 ? 'current' : ''}" 
-                       onclick="driverTable.page(0).draw('page')">1</a>
-                `);
-
-                // Add ellipsis and pages if needed
-                if (totalPages > 1) {
-                    if (currentPage > 3) {
-                        paginationContainer.append('<span class="ellipsis">...</span>');
-                    }
-
-                    // Add pages around current page
-                    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
-                        paginationContainer.append(`
-                            <a class="paginate_button ${currentPage === i ? 'current' : ''}" 
-                               onclick="driverTable.page(${i-1}).draw('page')">${i}</a>
-                        `);
-                    }
-
-                    if (currentPage < totalPages - 2) {
-                        paginationContainer.append('<span class="ellipsis">...</span>');
-                    }
-
-                    // Add last page
-                    paginationContainer.append(`
-                        <a class="paginate_button ${currentPage === totalPages ? 'current' : ''}" 
-                           onclick="driverTable.page(${totalPages-1}).draw('page')">${totalPages}</a>
-                    `);
-                }
             }
         });
-
-        // Add loading state to pagination buttons
-        driverTable.on('processing.dt', function() {
-            $('.paginate_button').prop('disabled', true);
-            $('.paginate_button').addClass('disabled');
-        });
-
-        driverTable.on('draw.dt', function() {
-            $('.paginate_button').prop('disabled', false);
-            $('.paginate_button').removeClass('disabled');
-        });
-    } else {
-        console.error('DataTables library not loaded');
-        showAlert('Error: DataTables library not loaded', 'error');
     }
 });
 

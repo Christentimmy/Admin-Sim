@@ -1,9 +1,10 @@
 // Dashboard API Functions
 async function fetchDashboardStats() {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/get-dashboard-stats`, {
             headers: {
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             }
         });
 
@@ -24,9 +25,10 @@ async function fetchDashboardStats() {
 
 async function fetchRecentBookings() {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/recent-bookings`, {
             headers: {
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             }
         });
 
@@ -44,9 +46,10 @@ async function fetchRecentBookings() {
 
 async function fetchRevenueData() {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/monthly-revenue`, {
             headers: {
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             }
         });
 
@@ -67,28 +70,36 @@ async function fetchRevenueData() {
 
 // UI Functions
 
+// Function to animate value changes
+function animateValue(elementId, start, end, duration) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+
+    const range = end - start;
+    const increment = range / (duration / 16);
+    let current = start;
+
+    const animate = () => {
+        current += increment;
+        if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+            element.textContent = Math.round(end);
+            return;
+        }
+        element.textContent = Math.round(current);
+        requestAnimationFrame(animate);
+    };
+
+    animate();
+}
+
 function updateDashboardStats(data) {
     const stats = data.stats;
     
-    // Update Total Trips
-    const totalTripsCard = document.querySelector('.col-xl-3.col-md-6.mb-4:nth-child(1)');
-    totalTripsCard.querySelector('.h5').textContent = stats.totalTrips;
-    totalTripsCard.querySelector('.text-success').textContent = '0%'; // Since we don't have growth data yet
-
-    // Update Active Drivers
-    const activeDriversCard = document.querySelector('.col-xl-3.col-md-6.mb-4:nth-child(2)');
-    activeDriversCard.querySelector('.h5').textContent = stats.activeDrivers;
-    activeDriversCard.querySelector('.text-success').textContent = '0%'; // Since we don't have growth data yet
-
-    // Update Total Users
-    const totalUsersCard = document.querySelector('.col-xl-3.col-md-6.mb-4:nth-child(3)');
-    totalUsersCard.querySelector('.h5').textContent = stats.totalUsers;
-    totalUsersCard.querySelector('.text-danger').textContent = '0'; // Since we don't have maintenance data yet
-
-    // Update Pending Bookings
-    const pendingBookingsCard = document.querySelector('.col-xl-3.col-md-6.mb-4:nth-child(4)');
-    pendingBookingsCard.querySelector('.h5').textContent = stats.pendingBookings;
-    pendingBookingsCard.querySelector('.text-danger').textContent = '0'; // Since we don't have new requests data yet
+    // Update values with animation
+    animateValue('totalTrips', 0, stats.totalTrips, 1000);
+    animateValue('activeDrivers', 0, stats.activeDrivers, 1000);
+    animateValue('totalUsers', 0, stats.totalUsers, 1000);
+    animateValue('pendingBookings', 0, stats.pendingBookings, 1000);
 }
 
 function updateRecentBookingsTable(bookings) {

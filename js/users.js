@@ -4,13 +4,14 @@ let currentUserStatus = null;
 
 // Initialize DataTable
 $(document).ready(function() {
+    const token = localStorage.getItem('token');
     const userTable = $('#dataTableHover').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
             url: `${window.API_CONFIG.API_BASE_URL}/users`,
             headers: {
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             },
             data: function(d) {
                 return {
@@ -122,11 +123,12 @@ function handleBlockUser(userId, status) {
 // Confirm block/unblock action
 $('#confirmBlockBtn').on('click', async function() {
     try {
+        const token = localStorage.getItem('token');
         const action = isBlockedStatus(currentUserStatus) ? 'unblock' : 'block';
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/users/${currentUserId}/${action}`, {
             method: 'PATCH',
             headers: {
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             }
         });
 

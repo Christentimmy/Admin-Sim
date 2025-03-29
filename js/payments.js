@@ -88,10 +88,11 @@ $(document).ready(function() {
     // Function to fetch all payments
     async function fetchAllPayments() {
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/payments`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -111,10 +112,11 @@ $(document).ready(function() {
     // Function to fetch driver payment history
     async function fetchDriverPayments(email) {
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/driver-payments`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ email })

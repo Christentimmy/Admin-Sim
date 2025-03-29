@@ -44,11 +44,12 @@ function formatStatus(status) {
 // Function to update refund statistics
 async function updateRefundStats() {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/refunds/stats`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             }
         });
 
@@ -79,11 +80,12 @@ async function updateRefundStats() {
 // Function to fetch and display refunds
 async function fetchAndDisplayRefunds() {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/get-all-refunds`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             }
         });
 
@@ -120,11 +122,12 @@ async function fetchAndDisplayRefunds() {
 // Function to show refund details
 async function showRefundDetails(refundId) {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/refund-details/${refundId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             }
         });
 
@@ -242,11 +245,12 @@ function showAlert(message, type = 'success') {
 // Function to approve refund
 async function approveRefund(refundId) {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/refunds/approve/${refundId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             }
         });
 
@@ -276,11 +280,12 @@ async function rejectRefund(refundId) {
     if (!reason) return; // If user cancels or provides no reason
 
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/refunds/cancel`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
                 refund_id: refundId,

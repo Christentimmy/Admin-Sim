@@ -80,12 +80,6 @@
           <span>System Settings</span>
         </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="profile.html">
-          <i class="fas fa-fw fa-user-cog"></i>
-          <span>Profile</span>
-        </a>
-      </li>
       <hr class="sidebar-divider">
       <div class="version" id="version-ruangadmin"></div>
     </ul>
@@ -164,22 +158,12 @@
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">All Drivers</h6>
-                  <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addDriverModal">
-                    <i class="fas fa-plus"></i> Add New Driver
-                  </button>
                 </div>
                 <div class="table-responsive p-3">
                   <table class="table align-items-center table-flush table-hover" id="dataTable">
                     <thead class="thead-light">
                       <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                        <th>Vehicle</th>
-                        <th>Status</th>
-                        <th>Rating</th>
-                        <th>Actions</th>
+                        <!-- Headers will be handled by DataTables -->
                       </tr>
                     </thead>
                     <tbody>

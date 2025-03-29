@@ -3,13 +3,14 @@ let currentStatus = 'all';
 
 // Initialize DataTable
 $(document).ready(function() {
+    const token = localStorage.getItem('token');
     const bookingsTable = $('#dataTableHover').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
             url: `${window.API_CONFIG.API_BASE_URL}/history`,
             headers: {
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             },
             data: function(d) {
                 return {
@@ -124,9 +125,10 @@ $(document).ready(function() {
 // Show ride details in modal
 async function showRideDetails(rideId) {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${window.API_CONFIG.API_BASE_URL}/ride-details/${rideId}`, {
             headers: {
-                'Authorization': `Bearer ${window.API_CONFIG.TEST_TOKEN}`
+                'Authorization': `Bearer ${token}`
             }
         });
 

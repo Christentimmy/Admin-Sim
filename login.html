@@ -9,71 +9,150 @@
   <meta name="description" content="">
   <meta name="author" content="">
   <link href="img/logo/logo.png" rel="icon">
-  <title>RuangAdmin - Login</title>
+  <title>TaxiAdmin - Login</title>
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link href="css/ruang-admin.min.css" rel="stylesheet">
+  <style>
+    .login-page {
+      background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-card {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .login-header img {
+      width: 80px;
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      color: #4e73df;
+      font-weight: 500;
+    }
+    .btn-login {
+      background: #4e73df;
+      border-color: #4e73df;
+      padding: 0.75rem;
+      font-weight: 500;
+    }
+    .btn-login:hover {
+      background: #224abe;
+      border-color: #224abe;
+    }
+    .alert {
+      display: none;
+      margin-bottom: 1rem;
+    }
+    .spinner-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4e73df;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .btn-login:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+  </style>
 
 </head>
 
-<body class="bg-gradient-login">
-  <!-- Login Content -->
-  <div class="container-login">
-    <div class="row justify-content-center">
-      <div class="col-xl-6 col-lg-12 col-md-9">
-        <div class="card shadow-sm my-5">
-          <div class="card-body p-0">
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="login-form">
-                  <div class="text-center">
-                    <h1 class="h4 text-gray-900 mb-4">Login</h1>
-                  </div>
-                  <form class="user">
-                    <div class="form-group">
-                      <input type="email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp"
-                        placeholder="Enter Email Address">
-                    </div>
-                    <div class="form-group">
-                      <input type="password" class="form-control" id="exampleInputPassword" placeholder="Password">
-                    </div>
-                    <div class="form-group">
-                      <div class="custom-control custom-checkbox small" style="line-height: 1.5rem;">
-                        <input type="checkbox" class="custom-control-input" id="customCheck">
-                        <label class="custom-control-label" for="customCheck">Remember
-                          Me</label>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <a href="index.html" class="btn btn-primary btn-block">Login</a>
-                    </div>
-                    <hr>
-                    <a href="index.html" class="btn btn-google btn-block">
-                      <i class="fab fa-google fa-fw"></i> Login with Google
-                    </a>
-                    <a href="index.html" class="btn btn-facebook btn-block">
-                      <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
-                    </a>
-                  </form>
-                  <hr>
-                  <div class="text-center">
-                    <a class="font-weight-bold small" href="register.html">Create an Account!</a>
-                  </div>
-                  <div class="text-center">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+<body class="login-page">
+  <div class="spinner-overlay" id="spinnerOverlay">
+    <div class="spinner"></div>
+  </div>
+  <div class="login-card">
+    <div class="login-header">
+      <img src="img/logo/logo2.png" alt="TaxiAdmin Logo">
+      <h4 class="text-primary">Welcome to TaxiAdmin</h4>
+      <p class="text-muted">Please login to your account</p>
+    </div>
+
+    <div class="alert alert-danger" id="errorAlert" role="alert"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" class="form-control" id="email" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" required>
+      </div>
+      <div class="form-group">
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="rememberMe">
+          <label class="custom-control-label" for="rememberMe">Remember me</label>
         </div>
       </div>
-    </div>
+      <button type="submit" class="btn btn-primary btn-block btn-login" id="loginButton">
+        <i class="fas fa-sign-in-alt mr-2"></i>Login
+      </button>
+    </form>
   </div>
-  <!-- Login Content -->
+
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-  <script src="js/ruang-admin.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorAlert = document.getElementById('errorAlert');
+      const loginButton = document.getElementById('loginButton');
+      const spinnerOverlay = document.getElementById('spinnerOverlay');
+
+      // Disable login button and show spinner
+      loginButton.disabled = true;
+      spinnerOverlay.style.display = 'flex';
+
+      try {
+        await auth.login(email, password);
+      } catch (error) {
+        errorAlert.textContent = error.message;
+        errorAlert.style.display = 'block';
+        errorAlert.classList.add('alert-danger');
+        errorAlert.classList.remove('alert-success');
+      } finally {
+        // Re-enable login button and hide spinner
+        loginButton.disabled = false;
+        spinnerOverlay.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 
 </html>
