@@ -18,9 +18,13 @@ const auth = {
                 }
             });
 
+            if (!response.ok) {
+                throw new Error('Token validation failed');
+            }
+
             return response.status === 200;
         } catch (error) {
-            console.error('Error validating token:', error);
+            console.error('Token validation error:', error);
             return false;
         }
     },
@@ -37,32 +41,22 @@ const auth = {
             });
 
             if (!response.ok) {
-                throw new Error('Invalid email or password');
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'Invalid email or password');
             }
 
             const data = await response.json();
             
+            if (!data.token) {
+                throw new Error('No token received from server');
+            }
+            
             // Store the token
             localStorage.setItem('token', data.token);
             
-            // Show success message with green background
-            const errorAlert = document.getElementById('errorAlert');
-            errorAlert.textContent = data.message;
-            errorAlert.style.display = 'block';
-            errorAlert.classList.remove('alert-danger');
-            errorAlert.classList.add('alert-success');
-            
-            // Redirect to dashboard after a short delay
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1000);
-            
+            return data;
         } catch (error) {
-            const errorAlert = document.getElementById('errorAlert');
-            errorAlert.textContent = error.message || 'Login failed. Please try again.';
-            errorAlert.style.display = 'block';
-            errorAlert.classList.remove('alert-success');
-            errorAlert.classList.add('alert-danger');
+            console.error('Login error:', error);
             throw error;
         }
     },
@@ -75,6 +69,6 @@ const auth = {
 
     // Get authentication token
     getToken: () => {
-        return localStorage.getItem('token') || API_CONFIG.TEST_TOKEN;
+        return localStorage.getItem('token');
     }
 }; 

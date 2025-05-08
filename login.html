@@ -126,6 +126,30 @@
   <script src="js/config.js"></script>
   <script src="js/auth.js"></script>
   <script>
+    // Check if user is already authenticated
+    (async () => {
+      try {
+        // Only check if we're not already on the login page
+        if (window.location.pathname.includes('login.html')) {
+          return;
+        }
+        
+        if (auth.isAuthenticated()) {
+          const isValid = await auth.validateToken();
+          if (isValid) {
+            window.location.href = 'index.html';
+          } else {
+            // If token is invalid, clear it and stay on login page
+            localStorage.removeItem('token');
+          }
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        // On any error, clear token and stay on login page
+        localStorage.removeItem('token');
+      }
+    })();
+
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -141,8 +165,11 @@
 
       try {
         await auth.login(email, password);
+        // Redirect to dashboard on successful login
+        window.location.href = 'index.html';
       } catch (error) {
-        errorAlert.textContent = error.message;
+        console.error('Login error:', error);
+        errorAlert.textContent = error.message || 'Login failed. Please try again.';
         errorAlert.style.display = 'block';
         errorAlert.classList.add('alert-danger');
         errorAlert.classList.remove('alert-success');
